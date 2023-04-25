@@ -18,6 +18,9 @@ def diffie_hellman():
     Yb = pow(a,Xb,q)
 
     # This is where Bob would send Yb to Alice, and Alice would send Ya to Bob.
+    # Mallory intercepts these and replaces them both with q!
+    Ya = q
+    Yb = q
 
     # Alice and Bob calculate their keys using the other's transmitted Y value. These should be the same!
     sa = pow(Yb,Xa,q)
@@ -61,6 +64,14 @@ def diffie_hellman():
 
     print("Checking if Alice and Bob's decrypted messages match pre-encryption... " + str(decrypteda == bytes(m1, 'utf-8')) + " " + str(decryptedb == bytes(m0, 'utf-8')))
 
+    # However, Mallory is very easily able to decrypt these messages, as she can predict the key!
+    # q to some power mod q (which is s on both sides) is always 0, so the key is always 0.
+    km = SHA256.new(str(0).encode('utf-8')).digest()
+    decryptm = AES.new(km, AES.MODE_ECB)
+    decryptedm0 = decryptm.decrypt(c0)
+    decryptedm1 = decryptm.decrypt(c1)
+    print("\nMallory decrypted: " + str(decryptedm0) + " and " + str(decryptedm1))
+    print("Checking if Mallory's decrypted messages match pre-encryption... " + str(decryptedm0 == bytes(m0, 'utf-8')) + " " + str(decryptedm1 == bytes(m1, 'utf-8')))
 
 if __name__ == "__main__":
     diffie_hellman()
