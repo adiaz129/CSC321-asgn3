@@ -9,6 +9,8 @@ def diffie_hellman():
     q = 0xB10B8F96A080E01DDE92DE5EAE5D54EC52C99FBCFB06A3C69A6A9DCA52D23B616073E28675A23D189838EF1E2EE652C013ECB4AEA906112324975C3CD49B83BFACCBDD7D90C4BD7098488E9C219A73724EFFD6FAE5644738FAA31A4FF55BCCC0A151AF5F0DC8B4BD45BF37DF365C1A65E68CFDA76D4DA708DF1FB2BC2E4A4371
     a = 0xA4D1CBD5C3FD34126765A442EFB99905F8104DD258AC507FD6406CFF14266D31266FEA1E5C41564B777E690F5504F213160217B4B01B886A5E91547F9E2749F4D7FBD7D3B9A92EE1909D0D2263F80A76A6A24C087A091F531DBF0A0169B6A28AD662A4D18E73AFA32D779D5918D08BC8858F4DCEF97C2A24855E6EEB22B3B2E5
 
+    # Mallory tampers with the generator of a.
+    a = 1
 
     # Generate random Xa and Xb within q. Xa is Alice's, Xb is Bob's
     Xa = random.randint(0,q)
@@ -61,6 +63,15 @@ def diffie_hellman():
 
     print("Checking if Alice and Bob's decrypted messages match pre-encryption... " + str(decrypteda == bytes(m1, 'utf-8')) + " " + str(decryptedb == bytes(m0, 'utf-8')))
 
+    # However, Mallory is very easily able to decrypt these messages, as she can predict the key!
+    # a is q, and q to some power mod q is still 0.
+    km = SHA256.new(str(0).encode('utf-8')).digest()
+    decryptm = AES.new(km, AES.MODE_ECB)
+    decryptedm0 = decryptm.decrypt(c0)
+    decryptedm1 = decryptm.decrypt(c1)
+    print("\nMallory decrypted: " + str(decryptedm0) + " and " + str(decryptedm1))
+    print("Checking if Mallory's decrypted messages match pre-encryption... " + str(
+        decryptedm0 == bytes(m0, 'utf-8')) + " " + str(decryptedm1 == bytes(m1, 'utf-8')))
 
 if __name__ == "__main__":
     diffie_hellman()
