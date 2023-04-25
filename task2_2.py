@@ -1,7 +1,6 @@
 import random
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
-from Crypto.Random import get_random_bytes
 
 
 def diffie_hellman():
@@ -61,7 +60,8 @@ def diffie_hellman():
     print("\nAlice decrypted: " + str(decrypteda))
     print("Bob decrypted: " + str(decryptedb))
 
-    print("Checking if Alice and Bob's decrypted messages match pre-encryption... " + str(decrypteda == bytes(m1, 'utf-8')) + " " + str(decryptedb == bytes(m0, 'utf-8')))
+    print("Checking if Alice and Bob's decrypted messages match pre-encryption... " +
+          str(decrypteda == bytes(m1, 'utf-8')) + " " + str(decryptedb == bytes(m0, 'utf-8')))
 
     # However, Mallory is very easily able to decrypt these messages, as she can predict the key!
     # a is q, and q to some power mod q is still 0.

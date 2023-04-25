@@ -1,7 +1,6 @@
 import random
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
-from Crypto.Random import get_random_bytes
 
 
 def diffie_hellman():
